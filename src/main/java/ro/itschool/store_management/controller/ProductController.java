@@ -2,16 +2,8 @@ package ro.itschool.store_management.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ro.itschool.store_management.model.Product;
+import org.springframework.web.bind.annotation.*;
+import ro.itschool.store_management.dto.ProductDto;
 import ro.itschool.store_management.service.ProductService;
 
 import java.util.List;
@@ -27,24 +19,35 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<ProductDto> getAllProducts() {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable long id) {
-        Product productById = productService.getProductById(id);
+    @GetMapping("/name")
+    public List<ProductDto> getProductsByName(@RequestParam String name) {
+        return productService.getProductsByName(name);
+    }
 
-        if (productById == null) {
+    @GetMapping("/name/category")
+    public List<ProductDto> getProductsByNameAndCategory(@RequestParam String name,
+                                                         @RequestParam String category) {
+        return productService.getProductsByNameAndCategory(name, category);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable long id) {
+        ProductDto productDtoById = productService.getProductById(id);
+
+        if (productDtoById == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(productById);
+        return ResponseEntity.ok(productDtoById);
     }
 
     @PostMapping
-    public ResponseEntity<String> addProduct(@RequestBody Product product) {
-        productService.addProduct(product);
+    public ResponseEntity<String> addProduct(@RequestBody ProductDto productDto) {
+        productService.addProduct(productDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Product added successfully");
@@ -56,25 +59,25 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable long id,
-                                                 @RequestBody Product product) {
-        Product existingProduct = productService.getProductById(id);
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable long id,
+                                                    @RequestBody ProductDto productDto) {
+        ProductDto existingProductDto = productService.getProductById(id);
 
-        if (existingProduct == null) {
+        if (existingProductDto == null) {
             return ResponseEntity.notFound().build();
         }
 
-        productService.updateProduct(product, existingProduct);
+        productService.updateProduct(productDto, existingProductDto);
 
-        return ResponseEntity.ok(existingProduct);
+        return ResponseEntity.ok(existingProductDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> replaceProduct(@PathVariable long id,
-                                                  @RequestBody Product product) {
-        Product existingProduct = productService.getProductById(id);
+    public ResponseEntity<ProductDto> replaceProduct(@PathVariable long id,
+                                                     @RequestBody ProductDto productDto) {
+        ProductDto existingProductDto = productService.getProductById(id);
 
-        if (existingProduct == null) {
+        if (existingProductDto == null) {
             return ResponseEntity.notFound().build();
 
             // or we can create a new product with the same id if it doesn't exist
@@ -87,9 +90,9 @@ public class ProductController {
             // );
         }
 
-        productService.replaceProduct(product, existingProduct);
+        productService.replaceProduct(productDto, existingProductDto);
 
-        return ResponseEntity.ok(existingProduct);
+        return ResponseEntity.ok(existingProductDto);
     }
 
 }

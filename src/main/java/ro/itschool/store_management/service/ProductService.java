@@ -1,59 +1,98 @@
 package ro.itschool.store_management.service;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ro.itschool.store_management.model.Product;
+import ro.itschool.store_management.dto.ProductDto;
+import ro.itschool.store_management.mapper.ObjectMapper;
+import ro.itschool.store_management.persistence.entity.Product;
+import ro.itschool.store_management.persistence.repository.ProductRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ProductService {
 
-    private static final List<Product> PRODUCTS = new ArrayList<>();
+    // We inject the ProductRepository and the ObjectMapper in the constructor.
+    private final ProductRepository productRepository;
+    // Observe that we use the ObjectMapper interface to declare the productMapper field.
+    private final ObjectMapper<ProductDto, Product> productMapper;
 
-    public List<Product> getAllProducts() {
-        return PRODUCTS;
+    public ProductService(ProductRepository productRepository,
+                          ObjectMapper<ProductDto, Product> productMapper) {
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
-    public Product getProductById(long id) {
-        return PRODUCTS.stream()
-                .filter(p -> p.getId() == id)
-                .findFirst()
-                .orElse(null);
+    public List<ProductDto> getProductsByName(String name) {
+        List<Product> productsByName = productRepository.getProductsByName(name);
+
+        return productsByName.stream()
+                .map(productMapper::mapToDto)
+                .toList();
     }
 
-    public void addProduct(Product product) {
-        PRODUCTS.add(product);
+    public List<ProductDto> getProductsByNameAndCategory(String name, String category) {
+//        List<Product> products = productRepository.findProductsByNameAndCategoryJpql(name, category);
+        List<Product> products = productRepository.findProductsByNameAndCategoryNative(name, category);
+
+        return products.stream()
+                .map(productMapper::mapToDto)
+                .toList();
+    }
+
+    public List<ProductDto> getAllProducts() {
+        // SELECT * FROM product
+        List<Product> allProducts = productRepository.findAll();
+
+        return allProducts.stream()
+                .map(productMapper::mapToDto)
+                .toList();
+    }
+
+    public ProductDto getProductById(long id) {
+        // SELECT * FROM product WHERE id = ?
+        Product referenceById = productRepository.getReferenceById(id);
+
+        return productMapper.mapToDto(referenceById);
+    }
+
+    public void addProduct(ProductDto productDto) {
+        Product product = productMapper.mapToEntity(productDto);
+
+        // INSERT INTO product (name, category, price, quantity)
+        // VALUES (?, ?, ?, ?)
+        productRepository.save(product);
     }
 
     public void deleteProductById(long id) {
-        PRODUCTS.removeIf(p -> p.getId() == id);
+        // DELETE FROM product WHERE id = ?
+        productRepository.deleteById(id);
     }
 
-    public void updateProduct(Product product, Product existingProduct) {
-        if (product.getName() != null) {
-            existingProduct.setName(product.getName());
+    // TODO: Still in progress
+    public void updateProduct(ProductDto productDto, ProductDto existingProductDto) {
+        if (productDto.getName() != null) {
+            existingProductDto.setName(productDto.getName());
         }
 
-        if (product.getCategory() != null) {
-            existingProduct.setCategory(product.getCategory());
+        if (productDto.getCategory() != null) {
+            existingProductDto.setCategory(productDto.getCategory());
         }
 
-        if (product.getPrice() != 0) {
-            existingProduct.setPrice(product.getPrice());
+        if (productDto.getPrice() != 0) {
+            existingProductDto.setPrice(productDto.getPrice());
         }
 
-        if (product.getQuantity() != 0) {
-            existingProduct.setQuantity(product.getQuantity());
+        if (productDto.getQuantity() != 0) {
+            existingProductDto.setQuantity(productDto.getQuantity());
         }
     }
 
-    public void replaceProduct(Product product, Product existingProduct) {
-        existingProduct.setName(product.getName());
-        existingProduct.setCategory(product.getCategory());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setQuantity(product.getQuantity());
+    // TODO: Still in progress
+    public void replaceProduct(ProductDto productDto, ProductDto existingProductDto) {
+        existingProductDto.setName(productDto.getName());
+        existingProductDto.setCategory(productDto.getCategory());
+        existingProductDto.setPrice(productDto.getPrice());
+        existingProductDto.setQuantity(productDto.getQuantity());
     }
 
 }
