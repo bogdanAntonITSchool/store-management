@@ -1,12 +1,18 @@
 package ro.itschool.store_management.persistence.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 
 // The @Entity annotation is used to mark the class as an entity.
@@ -39,5 +45,13 @@ public class Product {
 
     // @Transient annotation is used to indicate that a field is not to be persisted in the database.
     private int quantity;
+
+    @ManyToMany
+    @JoinTable(
+            name = "orders_product",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "order_id")
+    )
+    private Set<Order> orders;
 
 }

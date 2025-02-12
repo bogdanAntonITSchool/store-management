@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<!-- In order to use Thymeleaf features in HTML, you need to add the Thymeleaf namespace to the HTML tag. -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>
+        Hello, this is a home page.
+
+        <!-- This is a Thymeleaf expression. It will be replaced with the value of the user attribute from the model. -->
+        <span th:text="${user}"></span>
+    </h1>
+</body>
+</html>
