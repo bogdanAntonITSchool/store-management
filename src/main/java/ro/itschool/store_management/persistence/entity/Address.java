@@ -23,11 +23,11 @@ public class Address {
     private String number;
 
     // The @JsonManagedReference annotation is used to specify that the address entity is the owner of the relationship with the client entity.
-    @JsonManagedReference
-
-    // The @OneToOne annotation is used to specify that the address entity has a one-to-one relationship with the client entity.
-    // The mappedBy attribute is used to specify the name of the field in the client entity that is used to join the entities.
-    @OneToOne(mappedBy = "address")
-    private Client client;
+//    @JsonManagedReference
+//
+//    // The @OneToOne annotation is used to specify that the address entity has a one-to-one relationship with the client entity.
+//    // The mappedBy attribute is used to specify the name of the field in the client entity that is used to join the entities.
+//    @OneToOne(mappedBy = "address")
+//    private Client client;
 
 }

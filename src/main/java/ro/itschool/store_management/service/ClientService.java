@@ -1,5 +1,7 @@
 package ro.itschool.store_management.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ro.itschool.store_management.dto.ClientDto;
 import ro.itschool.store_management.mapper.ObjectMapper;
@@ -29,6 +31,14 @@ public class ClientService {
 
     public List<ClientDto> getClients() {
         return clientRepository.findAll().stream()
+                .map(clientMapper::mapToDto)
+                .toList();
+    }
+
+    // This method is used to retrieve clients by city.
+    // It uses a custom query defined in the ClientRepository interface.
+    public List<ClientDto> getClientsByCity(String city) {
+        return clientRepository.findByCityNative(city).stream()
                 .map(clientMapper::mapToDto)
                 .toList();
     }

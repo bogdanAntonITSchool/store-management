@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,7 +39,7 @@ public class Client {
 
     // The @OneToOne annotation is used to specify that the client entity has a one-to-one relationship with the address entity.
     // The cascade attribute is used to specify that all operations (PERSIST, REMOVE, REFRESH, MERGE, DETACH) should be cascaded to the address entity.
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
 
     // The @JoinColumn annotation is used to specify the column that is used to join the client and address entities.
     // The name attribute is used to specify the name of the column in the client entity that is used to join the entities.
