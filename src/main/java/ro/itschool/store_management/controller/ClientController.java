@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ro.itschool.store_management.dto.ClientDto;
 import ro.itschool.store_management.service.ClientService;
+import ro.itschool.store_management.validator.ClientValidator;
 
 import java.util.List;
 
@@ -24,9 +25,11 @@ import java.util.List;
 public class ClientController {
 
     private final ClientService clientService;
+    private final ClientValidator clientValidator;
 
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, ClientValidator clientValidator) {
         this.clientService = clientService;
+        this.clientValidator = clientValidator;
     }
 
     // RequestBody annotation is used to bind the request body to a method parameter.
@@ -44,6 +47,8 @@ public class ClientController {
     // }
     @PostMapping
     public ResponseEntity<ClientDto> createClient(@RequestBody ClientDto client) {
+        clientValidator.validateClient(client);
+
         return new ResponseEntity<>(clientService.createClient(client), HttpStatus.CREATED);
     }
 
