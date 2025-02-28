@@ -10,14 +10,14 @@ import java.util.Set;
  * @param id
  * @param totalPrice
  * @param status
- * @param clientId
+ * @param client
  * @param products
  */
 public record ViewOrderDto(
         Long id,
         double totalPrice,
         String status,
-        ClientDto clientId,
+        ClientDto client,
         Set<ProductDto> products
 ) {
 }

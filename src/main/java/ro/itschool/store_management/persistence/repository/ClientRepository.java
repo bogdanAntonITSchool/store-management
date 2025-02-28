@@ -36,4 +36,8 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
             "WHERE a.city = :city",
             nativeQuery = true)
     List<Client> findByCityNative(String city);
+
+    // SELECT c FROM Client c WHERE c.name = :name
+    List<Client> findClientByName(String name);
+
 }
